@@ -11,6 +11,11 @@ export type DataValue = string | number | Data | (() => string | number | Data);
 export interface Data
   extends Record<string | number | symbol, DataValue | DataValue[]> {}
 
+const defaultOptions = {
+  replaceUndefined: true,
+}
+export type TemplateFileOptions = typeof defaultOptions
+
 export async function renderGlob(
   sourceGlob: string,
   data: Data,
@@ -46,7 +51,7 @@ function getTemplateRegEx() {
   return combinedRegEx;
 }
 
-export function render(template: string, data: Data): string {
+export function render(template: string, data: Data, options: Partial<TemplateFileOptions> = {}): string {
   const templateRegEx = getTemplateRegEx();
 
   return template.replace(
@@ -55,6 +60,8 @@ export function render(template: string, data: Data): string {
       // Tag is for a repeating section
       if (sectionTag !== undefined) {
         const replacements = get(sectionTag, data) as Data[] | undefined;
+
+        if (!replacements) return ''
 
         return replacements
           .map((subData: Data) => {

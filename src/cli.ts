@@ -7,9 +7,17 @@ function trimUsageString(string: string): string {
   // Remove newlines from beginning and end
   const usage = string.replace(/^(\s*\n)*|(\s*\n)*$/g, '');
   // Remove leading indentation
-  const indentationLength = usage.match(/^\s*/)[0].length;
-  return usage.replace(new RegExp(`^ {${indentationLength}}`, 'gm'), '');
+  if (usage) {
+    const matches = usage.match(/^\s*/)
+    if (matches && matches.length) {
+      const indentationLength = matches[0].length;
+      return usage.replace(new RegExp(`^ {${indentationLength}}`, 'gm'), '');
+    }
+  }
+
+  return string
 }
+
 
 function showUsage() {
   const usageString = trimUsageString(`
